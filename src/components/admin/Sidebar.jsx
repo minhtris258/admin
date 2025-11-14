@@ -108,39 +108,7 @@ export default function Sidebar() {
           })}
         </nav>
 
-        <div className="p-4 border-t border-gray-700">
-          <div className="relative">
-            <button
-              onClick={() => setProfileOpen((s) => !s)}
-              className="w-full flex items-center gap-3 text-sm rounded-lg px-3 py-3 hover:bg-gray-700/50 transition-colors duration-200"
-              aria-expanded={profileOpen}
-            >
-              <img
-                src="https://static.vecteezy.com/system/resources/previews/019/194/935/non_2x/global-admin-icon-color-outline-vector.jpg"
-                alt="avatar"
-                className="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500"
-              />
-              <div className="flex-1 text-left">
-                <div className="text-sm font-semibold text-white">Admin</div>
-                <div className="text-xs text-gray-400">admin@example.com</div>
-              </div>
-              <svg className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${profileOpen ? "rotate-180" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path d="M6 9l6 6 6-6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-
-            {profileOpen && (
-              <div className="absolute left-2 right-2 bottom-14 bg-gray-800 border border-gray-700 rounded-lg shadow-2xl py-1 z-40">
-                <button className="w-full text-left px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-150" onClick={() => alert("Trang cá nhân")}>
-                  Chỉnh sửa trang cá nhân
-                </button>
-                <button className="w-full text-left px-4 py-2 text-red-400 hover:bg-gray-700 hover:text-red-300 transition-colors duration-150" onClick={handleLogout}>
-                  Đăng xuất
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
+      
       </aside>
 
       {/* ---------- Mobile top + drawer ---------- */}
@@ -179,76 +147,12 @@ export default function Sidebar() {
               </button>
             </div>
 
-            <nav className="p-3 space-y-1">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <NavLink
-                    key={item.key}
-                    to={item.to}
-                    end
-                    onClick={() => setMobileOpen(false)}
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 px-3 py-2 rounded-lg text-sm ${isActive ? "bg-indigo-600 text-white" : "text-gray-700 hover:bg-gray-50"}`
-                    }
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span>{item.label}</span>
-                  </NavLink>
-                );
-              })}
-            </nav>
-
-            <div className="p-4 border-t">
-              <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50" onClick={() => alert("Trang cá nhân")}>
-                Chỉnh sửa trang cá nhân
-              </button>
-              <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50" onClick={handleLogout}>
-                Đăng xuất
-              </button>
-            </div>
+           
           </div>
         </div>
       </div>
 
-      {/* ---------- Mobile bottom nav ---------- */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t z-40 flex items-center justify-between px-2 h-14">
-        {navItems.slice(0, 4).map((item) => {
-          const Icon = item.icon;
-          return (
-            <NavLink
-              key={item.key}
-              to={item.to}
-              end
-              className={({ isActive }) => `flex flex-col items-center justify-center text-xs w-1/5 ${isActive ? "text-indigo-600" : "text-gray-600"}`}
-            >
-              <Icon className="w-5 h-5 mb-0.5" />
-              <span className="truncate">{item.label}</span>
-            </NavLink>
-          );
-        })}
-
-        {/* profile / more button */}
-        <button onClick={() => setProfileOpen((s) => !s)} className="flex flex-col items-center justify-center text-xs w-1/5 text-gray-600">
-          <svg className="w-5 h-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M12 7a4 4 0 100-8 4 4 0 000 8z" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          <span>Admin</span>
-        </button>
-
-        {/* mobile profile popup */}
-        {profileOpen && (
-          <div className="absolute bottom-14 right-3 bg-white shadow-lg rounded z-50 w-44 p-1">
-            <button className="block w-full text-left px-3 py-2 text-sm hover:bg-gray-50" onClick={() => alert("Trang cá nhân")}>
-              Chỉnh sửa trang cá nhân
-            </button>
-            <button className="block w-full text-left px-3 py-2 text-sm hover:bg-gray-50" onClick={handleLogout}>
-              Đăng xuất
-            </button>
-          </div>
-        )}
-      </nav>
+    
     </>
   );
 }
