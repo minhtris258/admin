@@ -10,18 +10,18 @@ export default function AdminLayout() {
 
   return (
    
-    <div className="flex h-screen ">
+    <div className="flex h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50">
               <Sidebar />
               
       
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col bg-gray-50 ">
+      <div className="flex-1 flex flex-col">
         <Header onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
        
 
         {/* Content area */}
-        <main className="p-4 flex-1 overflow-auto">
+        <main className="p-6 flex-1 overflow-auto">
           <Outlet />
         </main>
       </div>

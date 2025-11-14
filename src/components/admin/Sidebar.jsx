@@ -73,13 +73,18 @@ export default function Sidebar() {
   return (
     <>
       {/* ---------- Desktop Sidebar ---------- */}
-      <aside className="hidden md:flex flex-col bg-white border-r h-screen fixed md:static top-0 left-0 z-40"
-                style={{ width: 230 }}>
-        <div className="h-16 flex items-center px-5 border-b">
-          <div className="font-semibold text-lg">Admin Panel</div>
+      <aside className="hidden md:flex flex-col bg-gradient-to-b from-gray-900 to-gray-800 border-r border-gray-700 h-screen fixed md:static top-0 left-0 z-40 shadow-2xl"
+                style={{ width: 250 }}>
+        <div className="h-16 flex items-center px-6 border-b border-gray-700">
+          <div className="font-bold text-xl text-white flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold">A</span>
+            </div>
+            Admin Panel
+          </div>
         </div>
 
-        <nav className="flex-1 overflow-auto px-2 py-4 space-y-1">
+        <nav className="flex-1 overflow-auto px-3 py-6 space-y-2">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -88,46 +93,48 @@ export default function Sidebar() {
                 to={item.to}
                 end
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm
-                  ${isActive ? "bg-indigo-600 text-white" : "text-gray-700 hover:bg-gray-100"}`
+                  `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-sm group
+                  ${isActive 
+                    ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/50" 
+                    : "text-gray-300 hover:bg-gray-700/50 hover:text-white"}`
                 }
               >
-                <span className="flex-none text-lg">
+                <span className="flex-none text-lg group-hover:scale-110 transition-transform duration-200">
                   <Icon className="w-5 h-5" />
                 </span>
-                <span className="truncate">{item.label}</span>
+                <span className="truncate font-medium">{item.label}</span>
               </NavLink>
             );
           })}
         </nav>
 
-        <div className="p-4 border-t">
+        <div className="p-4 border-t border-gray-700">
           <div className="relative">
             <button
               onClick={() => setProfileOpen((s) => !s)}
-              className="w-full flex items-center gap-3 text-sm rounded-lg px-2 py-2 hover:bg-gray-50"
+              className="w-full flex items-center gap-3 text-sm rounded-lg px-3 py-3 hover:bg-gray-700/50 transition-colors duration-200"
               aria-expanded={profileOpen}
             >
               <img
                 src="https://static.vecteezy.com/system/resources/previews/019/194/935/non_2x/global-admin-icon-color-outline-vector.jpg"
                 alt="avatar"
-                className="w-9 h-9 rounded-full object-cover"
+                className="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500"
               />
               <div className="flex-1 text-left">
-                <div className="text-sm font-medium text-gray-900">Admin</div>
-                <div className="text-xs text-gray-500">admin@example.com</div>
+                <div className="text-sm font-semibold text-white">Admin</div>
+                <div className="text-xs text-gray-400">admin@example.com</div>
               </div>
-              <svg className={`w-4 h-4 transition-transform ${profileOpen ? "rotate-180" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <svg className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${profileOpen ? "rotate-180" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path d="M6 9l6 6 6-6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
 
             {profileOpen && (
-              <div className="absolute left-2 right-2 bottom-14 bg-white border rounded-lg shadow-lg py-1 z-40">
-                <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50" onClick={() => alert("Trang cá nhân")}>
+              <div className="absolute left-2 right-2 bottom-14 bg-gray-800 border border-gray-700 rounded-lg shadow-2xl py-1 z-40">
+                <button className="w-full text-left px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-150" onClick={() => alert("Trang cá nhân")}>
                   Chỉnh sửa trang cá nhân
                 </button>
-                <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50" onClick={handleLogout}>
+                <button className="w-full text-left px-4 py-2 text-red-400 hover:bg-gray-700 hover:text-red-300 transition-colors duration-150" onClick={handleLogout}>
                   Đăng xuất
                 </button>
               </div>
