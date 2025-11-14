@@ -52,9 +52,8 @@ function IconChat(props) {
 }
 
 /* ---------- Sidebar component ---------- */
-export default function Sidebar() {
+export default function Sidebar({ isOpen = true }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
 
   // lock scroll when drawer open
   useEffect(() => {
@@ -65,17 +64,12 @@ export default function Sidebar() {
     }
   }, [mobileOpen]);
 
-  const handleLogout = () => {
-    // replace with real logout
-    alert("Đăng xuất");
-  };
-
   return (
     <>
       {/* ---------- Desktop Sidebar ---------- */}
-      <aside className="hidden md:flex flex-col bg-gradient-to-b from-gray-900 to-gray-800 border-r border-gray-700 h-screen fixed md:static top-0 left-0 z-40 shadow-2xl"
-                style={{ width: 250 }}>
-        <div className="h-16 flex items-center px-6 border-b border-gray-700">
+      <aside className={`hidden md:flex flex-col bg-gradient-to-b from-gray-900 to-gray-800 border-r border-gray-700 h-screen fixed md:static top-0 left-0 z-40 shadow-2xl transition-all duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full md:w-0 md:border-0 md:px-0 md:overflow-hidden'}`}
+                style={{ width: isOpen ? 250 : 0 }}>
+        <div className="h-16 flex items-center px-6 border-b border-gray-700" style={{ minWidth: 250 }}>
           <div className="font-bold text-xl text-white flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold">A</span>
@@ -84,7 +78,7 @@ export default function Sidebar() {
           </div>
         </div>
 
-        <nav className="flex-1 overflow-auto px-3 py-6 space-y-2">
+        <nav className="flex-1 overflow-auto px-3 py-6 space-y-2" style={{ minWidth: 250 }}>
           {navItems.map((item) => {
             const Icon = item.icon;
             return (

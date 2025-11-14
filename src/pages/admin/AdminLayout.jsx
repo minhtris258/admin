@@ -6,12 +6,12 @@ import Sidebar from "../../components/admin/Sidebar";
 import Header from "../../components/admin/Header";
 
 export default function AdminLayout() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
    
     <div className="flex h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50">
-              <Sidebar />
+              <Sidebar isOpen={sidebarOpen} />
               
       
 
