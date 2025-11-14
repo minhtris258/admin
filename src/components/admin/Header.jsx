@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, memo } from "react";
 
-export default function Header({ onToggleSidebar }) {
+function Header({ onToggleSidebar }) {
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState("");
     const menuRef = useRef(null);
@@ -100,3 +100,5 @@ export default function Header({ onToggleSidebar }) {
         </header>
     );
 }
+
+export default memo(Header);
