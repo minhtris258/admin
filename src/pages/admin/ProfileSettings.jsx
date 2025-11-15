@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
+import { initialMockUsers, MOCK_IDS } from '../../mocks/mockdata';
 
 const ProfileSettings = () => {
+    // Lấy dữ liệu Admin từ mock data
+    const adminUser = initialMockUsers.find(u => u.role_id === MOCK_IDS.roles.admin) || {};
+
     const [profile, setProfile] = useState({
-        name: 'Admin Tổng Quát',
-        email: 'admin.phongkham@clinic.com',
-        phone: '0901 234 567',
+        name: adminUser.name || 'Admin Tổng Quát',
+        email: adminUser.email || 'admin@clinic.com',
+        phone: '0901 234 567', // Phone không có trong UserModel, dùng mock
         role: 'Quản Trị Viên Hệ Thống',
         currentPassword: '',
         newPassword: '',
@@ -72,7 +76,7 @@ const ProfileSettings = () => {
                         </div>
 
                         <label className="block">
-                            <span className="text-gray-700 font-medium">Họ Tên:</span>
+                            <span className="text-gray-700 font-medium">Họ Tên (UserModel: name):</span>
                             <input 
                                 type="text" 
                                 name="name"
@@ -83,7 +87,7 @@ const ProfileSettings = () => {
                             />
                         </label>
                         <label className="block">
-                            <span className="text-gray-700 font-medium">Email (Không thể thay đổi):</span>
+                            <span className="text-gray-700 font-medium">Email (UserModel: email):</span>
                             <input 
                                 type="email" 
                                 name="email"
@@ -93,7 +97,7 @@ const ProfileSettings = () => {
                             />
                         </label>
                         <label className="block">
-                            <span className="text-gray-700 font-medium">Điện Thoại:</span>
+                            <span className="text-gray-700 font-medium">Điện Thoại (Mock):</span>
                             <input 
                                 type="text" 
                                 name="phone"
@@ -130,7 +134,7 @@ const ProfileSettings = () => {
                             />
                         </label>
                         <label className="block">
-                            <span className="text-gray-700 font-medium">Mật khẩu mới:</span>
+                            <span className="text-gray-700 font-medium">Mật khẩu mới (UserModel: password):</span>
                             <input 
                                 type="password" 
                                 name="newPassword"

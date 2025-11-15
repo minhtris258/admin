@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, Calendar, Users, BarChart, Settings, Menu, DollarSign, Stethoscope } from 'lucide-react';
+import { Menu, LayoutDashboard, Calendar, Stethoscope, Users, BarChart, Settings, Lock } from "lucide-react";
+
 
 const Sidebar = ({ isOpen, toggleSidebar, currentView, setView }) => {
     const navItems = [
@@ -9,7 +10,6 @@ const Sidebar = ({ isOpen, toggleSidebar, currentView, setView }) => {
         { name: 'Quản lý Bác Sĩ', icon: Stethoscope, view: 'doctors' }, 
         { name: 'Quản lý Bệnh Nhân', icon: Users, view: 'patients' },
         { name: 'Báo Cáo', icon: BarChart, view: 'reports' },
-        // Thêm Profile vào Sidebar
         { name: 'Profile', icon: Users, view: 'profile' }, 
         { name: 'Cài Đặt', icon: Settings, view: 'settings' },
     ];
@@ -17,7 +17,7 @@ const Sidebar = ({ isOpen, toggleSidebar, currentView, setView }) => {
     return (
         <aside 
             className={`fixed inset-y-0 left-0 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:relative lg:translate-x-0 transition duration-300 ease-in-out 
-                       w-64 bg-indigo-800 text-white flex flex-col z-30 shadow-2xl lg:shadow-none`}
+                       w-64 bg-indigo-800 text-white flex flex-col z-30 shadow-2xl lg:shadow-none lg:flex-shrink-0`}
         >
             {/* Logo */}
             <div className="flex items-center justify-between h-16 px-6 border-b border-indigo-700">
@@ -31,7 +31,7 @@ const Sidebar = ({ isOpen, toggleSidebar, currentView, setView }) => {
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 p-4 space-y-2">
+            <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                 {navItems.map(item => (
                     <a
                         key={item.name}
@@ -52,7 +52,7 @@ const Sidebar = ({ isOpen, toggleSidebar, currentView, setView }) => {
             {/* Footer/Logout Placeholder */}
             <div className="p-4 border-t border-indigo-700">
                 <a href="#" onClick={(e) => { e.preventDefault(); setView('logout'); }} className="flex items-center px-4 py-2 rounded-lg text-red-300 hover:bg-indigo-700 hover:text-red-100 transition duration-150">
-                    <DollarSign className="h-5 w-5 mr-3" />
+                    <Lock className="h-5 w-5 mr-3" />
                     Đăng Xuất
                 </a>
             </div>

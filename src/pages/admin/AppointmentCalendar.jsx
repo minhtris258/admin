@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { initialMockPatients } from '../../mocks/mockdata';
 
-const AppointmentCalendar = ({ appointments, currentMonth, setCurrentMonth }) => {
+const AppointmentCalendar = ({ appointments, currentMonth, setCurrentMonth, onSelectDate }) => {
     const daysOfWeek = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
     const [selectedDate, setSelectedDate] = useState(null);
 
@@ -12,8 +13,6 @@ const AppointmentCalendar = ({ appointments, currentMonth, setCurrentMonth }) =>
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         
         // Convert JS Sunday (0) to Vietnamese Sunday (6). Monday (1) stays (0).
-        // JS: 0=Sun, 1=Mon, ..., 6=Sat
-        // VN: 0=Mon, 1=Tue, ..., 5=Sat, 6=Sun
         const startDayIndex = (firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1); 
 
         return { startDayIndex, daysInMonth };
@@ -46,8 +45,7 @@ const AppointmentCalendar = ({ appointments, currentMonth, setCurrentMonth }) =>
     const handleDateClick = (day) => {
         const dateString = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         setSelectedDate(dateString);
-        // Có thể mở modal hoặc hiển thị danh sách lịch hẹn chi tiết tại đây
-        console.log("Xem chi tiết lịch hẹn ngày: " + dateString);
+        if (onSelectDate) onSelectDate(dateString, appointmentsByDate[dateString] || []);
     };
 
     const isToday = (day) => {
@@ -91,10 +89,11 @@ const AppointmentCalendar = ({ appointments, currentMonth, setCurrentMonth }) =>
                 {/* Các ngày trong tháng */}
                 {Array.from({ length: daysInMonth }).map((_, index) => {
                     const day = index + 1;
+                    const dateString = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                     const isBusy = hasAppointment(day);
                     const todayClass = isToday(day) ? 'ring-2 ring-indigo-500 border-2 border-white' : '';
                     const busyClass = isBusy ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-700 hover:bg-gray-50';
-                    const selectedClass = selectedDate && selectedDate.endsWith(String(day).padStart(2, '0')) ? 'bg-indigo-500 text-white hover:bg-indigo-500' : '';
+                    const selectedClass = selectedDate === dateString ? 'bg-indigo-500 text-white hover:bg-indigo-500' : '';
 
                     return (
                         <div
@@ -103,7 +102,7 @@ const AppointmentCalendar = ({ appointments, currentMonth, setCurrentMonth }) =>
                             onClick={() => handleDateClick(day)}
                         >
                             {day}
-                            {isBusy && !selectedClass && (
+                            {isBusy && selectedDate !== dateString && (
                                 <span className="absolute bottom-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                             )}
                         </div>
@@ -117,7 +116,7 @@ const AppointmentCalendar = ({ appointments, currentMonth, setCurrentMonth }) =>
                     <ul className="space-y-1 max-h-24 overflow-y-auto">
                         {appointmentsByDate[selectedDate].map(app => (
                             <li key={app.id} className="text-xs text-gray-600 bg-gray-50 p-1 rounded">
-                                **{app.time}**: {app.patient} ({app.status})
+                                **{app.start}**: {initialMockPatients.find(p => p.id === app.patient_id)?.fullName || 'Bệnh Nhân [ID:' + app.patient_id.slice(-4) + ']'} ({app.status})
                             </li>
                         ))}
                     </ul>

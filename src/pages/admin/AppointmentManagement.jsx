@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Calendar, Plus, Edit, Trash2, List } from 'lucide-react';
 import Modal from '../../components/admin/Modal';
 import AppointmentCalendar from './AppointmentCalendar';
-import { initialMockAppointments, mockDoctors } from "../../mocks/mockdata";
+import { initialMockAppointments, initialMockPatients, initialMockDoctors, mockSpecialties, MOCK_IDS } from '../../mocks/mockdata';
+import { useMemo } from 'react';
 
 const AppointmentManagement = () => {
     const [appointments, setAppointments] = useState(initialMockAppointments);
@@ -11,26 +12,37 @@ const AppointmentManagement = () => {
     const [formData, setFormData] = useState({});
     const [confirmDeleteId, setConfirmDeleteId] = useState(null);
     
-    // Thêm state cho Lịch
     const [currentMonth, setCurrentMonth] = useState(new Date());
-    // Thêm state cho chế độ xem (chỉ dùng cho mobile)
     const [viewMode, setViewMode] = useState('list'); // 'list' or 'calendar'
+    const [selectedDayAppointments, setSelectedDayAppointments] = useState(null);
+
+    // Mappings
+    const patientMap = useMemo(() => new Map(initialMockPatients.map(p => [p.id, p])), []);
+    const doctorMap = useMemo(() => new Map(initialMockDoctors.map(d => [d.id, d])), []);
 
     // Tìm tên Bác sĩ từ ID
     const getDoctorName = (doctorId) => {
-        const doctor = mockDoctors.find(d => d.id === doctorId);
-        return doctor ? `${doctor.name} (${doctor.specialty})` : 'Chưa xác định';
+        const doctor = doctorMap.get(doctorId);
+        const specialty = mockSpecialties.find(s => s.id === doctor?.specialty_id)?.name;
+        return doctor ? `${doctor.fullName} (${specialty || 'Chưa rõ'})` : 'Chưa xác định';
     };
+    
+    // Tìm tên Bệnh nhân từ ID
+    const getPatientName = (patientId) => {
+        const patient = patientMap.get(patientId);
+        return patient ? patient.fullName : 'Chưa xác định';
+    };
+
 
     const getStatusStyle = (status) => {
         switch (status) {
-            case 'Hoàn thành':
+            case 'completed':
                 return 'bg-green-100 text-green-800';
-            case 'Đang chờ':
+            case 'confirmed':
+                return 'bg-blue-100 text-blue-800';
+            case 'pending':
                 return 'bg-yellow-100 text-yellow-800';
-            case 'Đã hủy':
-                return 'bg-red-100 text-red-800';
-            case 'Chưa đến':
+            case 'cancelled':
                 return 'bg-red-100 text-red-800';
             default:
                 return 'bg-gray-100 text-gray-800';
@@ -39,7 +51,7 @@ const AppointmentManagement = () => {
 
     const handleAddEdit = (appointment) => {
         setEditingAppointment(appointment);
-        setFormData(appointment ? appointment : { patient: '', doctorId: mockDoctors[0].id, date: new Date().toISOString().split('T')[0], time: '09:00', reason: '', status: 'Đang chờ' });
+        setFormData(appointment ? appointment : { patient_id: MOCK_IDS.patients.p1, doctor_id: MOCK_IDS.doctors.d1, date: new Date().toISOString().split('T')[0], start: '09:00', reason: '', status: 'pending' });
         setIsModalOpen(true);
     };
 
@@ -55,7 +67,7 @@ const AppointmentManagement = () => {
     const handleSave = (e) => {
         e.preventDefault();
         
-        if (!formData.patient || !formData.date || !formData.time) {
+        if (!formData.patient_id || !formData.date || !formData.start) {
             console.error('Lỗi: Vui lòng điền đầy đủ thông tin bắt buộc.');
             return;
         }
@@ -65,7 +77,8 @@ const AppointmentManagement = () => {
         } else {
             const newAppointment = {
                 ...formData,
-                id: Date.now(),
+                id: 'mock-a-' + Date.now().toString().slice(-6),
+                timeslot_id: 'mock-ts-' + Date.now().toString().slice(-6), // Giả lập Timeslot ID
             };
             setAppointments([...appointments, newAppointment]);
         }
@@ -76,6 +89,10 @@ const AppointmentManagement = () => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+    };
+
+    const handleDateSelection = (dateString, selectedApps) => {
+        setSelectedDayAppointments({ date: dateString, apps: selectedApps });
     };
 
     return (
@@ -109,6 +126,7 @@ const AppointmentManagement = () => {
                         appointments={appointments}
                         currentMonth={currentMonth}
                         setCurrentMonth={setCurrentMonth}
+                        onSelectDate={handleDateSelection}
                     />
                 </div>
 
@@ -116,7 +134,9 @@ const AppointmentManagement = () => {
                 <div className={`lg:col-span-2 ${viewMode === 'calendar' && 'hidden lg:block'}`}>
                     <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-xl font-semibold text-gray-800">Danh Sách Lịch Hẹn</h3>
+                            <h3 className="text-xl font-semibold text-gray-800">
+                                {selectedDayAppointments ? `Lịch Hẹn Ngày ${selectedDayAppointments.date.split('-').reverse().join('/')}` : 'Danh Sách Lịch Hẹn'}
+                            </h3>
                             <button 
                                 onClick={() => handleAddEdit(null)}
                                 className="flex items-center bg-indigo-600 text-white px-3 py-2 text-sm rounded-lg font-semibold hover:bg-indigo-700 transition"
@@ -138,15 +158,15 @@ const AppointmentManagement = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
-                                    {appointments.map((app) => (
+                                    { (selectedDayAppointments ? selectedDayAppointments.apps : appointments).map((app) => (
                                         <tr key={app.id} className="hover:bg-gray-50">
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{app.patient}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{getDoctorName(app.doctorId)}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.time} - {app.date}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{getPatientName(app.patient_id)}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{getDoctorName(app.doctor_id)}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.start} - {app.date}</td>
                                             <td className="hidden sm:table-cell px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{app.reason}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusStyle(app.status)}`}>
-                                                    {app.status}
+                                                    {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -181,26 +201,28 @@ const AppointmentManagement = () => {
                 <form onSubmit={handleSave}>
                     <div className="space-y-4">
                         <label className="block">
-                            <span className="text-gray-700">Tên Bệnh Nhân:</span>
-                            <input 
-                                type="text" 
-                                name="patient"
-                                value={formData.patient || ''}
+                            <span className="text-gray-700">Bệnh Nhân:</span>
+                            <select 
+                                name="patient_id"
+                                value={formData.patient_id || MOCK_IDS.patients.p1}
                                 onChange={handleInputChange}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 p-2 border"
-                                required
-                            />
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 p-2 border bg-white"
+                            >
+                                {initialMockPatients.map(p => (
+                                    <option key={p.id} value={p.id}>{p.fullName} ({p.phone})</option>
+                                ))}
+                            </select>
                         </label>
                         <label className="block">
                             <span className="text-gray-700">Bác Sĩ:</span>
                             <select 
-                                name="doctorId"
-                                value={formData.doctorId || mockDoctors[0].id}
+                                name="doctor_id"
+                                value={formData.doctor_id || MOCK_IDS.doctors.d1}
                                 onChange={handleInputChange}
                                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 p-2 border bg-white"
                             >
-                                {mockDoctors.map(doctor => (
-                                    <option key={doctor.id} value={doctor.id}>{doctor.name} ({doctor.specialty})</option>
+                                {initialMockDoctors.map(doctor => (
+                                    <option key={doctor.id} value={doctor.id}>{getDoctorName(doctor.id)}</option>
                                 ))}
                             </select>
                         </label>
@@ -220,8 +242,8 @@ const AppointmentManagement = () => {
                                 <span className="text-gray-700">Giờ Hẹn:</span>
                                 <input 
                                     type="time" 
-                                    name="time"
-                                    value={formData.time || '09:00'}
+                                    name="start"
+                                    value={formData.start || '09:00'}
                                     onChange={handleInputChange}
                                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 p-2 border"
                                     required
@@ -242,14 +264,14 @@ const AppointmentManagement = () => {
                             <span className="text-gray-700">Trạng Thái:</span>
                             <select 
                                 name="status"
-                                value={formData.status || 'Đang chờ'}
+                                value={formData.status || 'pending'}
                                 onChange={handleInputChange}
                                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 p-2 border bg-white"
                             >
-                                <option value="Đang chờ">Đang chờ</option>
-                                <option value="Hoàn thành">Hoàn thành</option>
-                                <option value="Chưa đến">Chưa đến</option>
-                                <option value="Đã hủy">Đã hủy</option>
+                                <option value="pending">Đang chờ (Pending)</option>
+                                <option value="confirmed">Đã xác nhận (Confirmed)</option>
+                                <option value="completed">Đã hoàn thành (Completed)</option>
+                                <option value="cancelled">Đã hủy (Cancelled)</option>
                             </select>
                         </label>
                     </div>

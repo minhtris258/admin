@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect, memo } from "react";
-import { Menu, Users, Settings, DollarSign } from "lucide-react";
+import React, { useState, memo } from 'react';
+import { Menu, Users, Settings, Lock } from 'lucide-react';
 
 const Header = ({ toggleSidebar, setView }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -19,6 +19,7 @@ const Header = ({ toggleSidebar, setView }) => {
     };
 
     return (
+        // Header sử dụng sticky top-0, hoạt động tốt trên cả mobile và desktop
         <header className="flex items-center justify-between p-4 bg-white shadow-sm h-16 sticky top-0 z-20 border-b border-gray-200">
             {/* Mobile Menu Button */}
             <button 
@@ -77,7 +78,7 @@ const Header = ({ toggleSidebar, setView }) => {
                                 onClick={(e) => { e.preventDefault(); handleAction('logout'); }}
                                 className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition"
                             >
-                                <DollarSign className="w-4 h-4 mr-2" /> Đăng Xuất
+                                <Lock className="w-4 h-4 mr-2" /> Đăng Xuất
                             </a>
                         </div>
                     )}

@@ -7,6 +7,7 @@ import DashboardContent from "./Dashboard";
 import AppointmentManagement from "./AppointmentManagement";
 import PatientManagement from "./PatientManagement";
 import ProfileSettings from "./ProfileSettings";
+import DoctorManagement from "./DoctorManagement";
 
 
 const AdminLayout = () => {
@@ -27,10 +28,7 @@ const AdminLayout = () => {
             case 'patients':
                 return <PatientManagement />;
             case 'doctors':
-                return <PatientManagement 
-                    title="Quản lý Bác Sĩ (Placeholder)" 
-                    content="Giao diện thêm, sửa, xóa thông tin và lịch làm việc của các bác sĩ."
-                />;
+                return <DoctorManagement />;
             case 'reports':
                 return <PatientManagement 
                     title="Báo Cáo & Phân Tích (Placeholder)" 
@@ -82,5 +80,6 @@ const AdminLayout = () => {
         </div>
     );
 };
+
 
 export default AdminLayout;
